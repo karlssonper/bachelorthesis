@@ -1,0 +1,17 @@
+\subsection{Outline of the Algorithm}
+
+This section will briefly outline the important steps in the algorithm that is covered later on in the report. The key to the hybrid FLIP method is that we store both particles and a grid. Each particle stores a position in space, $\vec{x}_p$ and a velocity $\vec{u}_p$. Every substep, the particles and the grid are going to comminucate and transfer properties to each other. The particles are integrated over time to get new positions. Then the particles transfer the velocities to the grid and it is the grids task to make the velocity field divergence free and therefore conserving the volume of the water. The input to the algorithm is the regionial shape of the initial state of the water and the solid boundaries, i.e walls or rigid objects that the water should collide against. We will refer to the solid boundaries as just solids in this report. To track the surface of the solids we will use a level set. To simplify things, this report will not cover the case of moving solids or cases where the surface of the solid is changing over time.
+
+\begin{enumerate}
+\item Create particles from initial shape
+\item Transfer particle velocities to grid
+\item Mark cells fluid
+\item Apply external forces to grid
+\item Create Level Set
+\item Reinitialize Level Set
+\item Extrapolate Velocities
+\item Solve Pressure
+\item Tranfser grid velocities to particles
+\item Advect particles
+\item Repeat step 2-10 until simulation done
+\end{enumerate}

@@ -1,0 +1,116 @@
+\subsection{Boundary conditions}
+
+There are two different kinds of boundary conditions we must take into account before we build our linear system. The first one is on the boundary between air and the fluid, also called as the free surface boundary condition. Air is a lot ligther than water (the density of water is approximately 700 larger than air) and we make the simplifiction in our model that air can be represented with constant atmospheric pressure (in reality air is also a fluid). Equation \ref{TODO} tells us that only the derivative of pressure matters when updating our velocity field which means it does not matter which constant we use for air since the derivative is going to be zero anway. For convenience purposes we choose pressure to be zero for every air cell. When enforcing a constant at the boundary, it is called a Dirichlet boundary condition. In Equation \ref{pressureeq}, if a neighboring cell is air, we force the pressure of that cell to be zero. For example, when setting up the pressure equations for cell $(i,j)$, let us say that cell $(i-1, j)$ is an air cell. The pressure equation for cell $(i,j)$ is then
+
+\begin{equation}
+\begin{split}
+4p_{i,j} - 0 - p_{i+1,j} & - p_{i,j-1} - p_{i,j+1} = \\ &-\frac{\rho \Delta x}{\Delta t}({u^*}_{i+1/2,j} - {u^*}_{i-1/2,j} + {v^*}_{i,j+1/2} - {v^*}_{i,j-1/2})
+\end{split}
+\label{dirichleteq}
+\end{equation}
+
+The more difficult boundary condition is the one between the fluid and the solid. In terms of our velocity field, it is important that no fluid is flowing into the solid. This means that the normal component of the velocity has to be zero
+
+\begin{equation}
+\vec{u} \cdot \hat{n} = 0
+\end{equation}
+
+In our implementation we are going to enforce the velocity of every edge next to a solid cell to be zero after updating the pressure. The confusing part is to understand how solid boundaries change the pressure equation. To find an expression for pressure in neighboring solid cells, let us start with an example where cell $(i,j)$ is a fluid and cell $(i+1,j)$. We want to guarantee that ${u^{n+1}}_{i+1/2,j} = 0$ after the pressure update, which means we can rewrite Equation \ref{pressurefaceupdateeq} to
+
+\begin{equation}
+0 = {u^*}_{i+1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i+1,j} - p_{i,j}}{\Delta x}
+\end{equation}
+
+If we rearrange the terms we get an expression for the pressure inside the solid, $p_{i+1,j}$.
+
+\begin{equation}
+p_{i+1,j} = p_{i,j} + \frac{\rho \Delta x}{\Delta t}{u^*}_{i+1/2,j}
+\label{solidpressureeq}
+\end{equation}
+
+In this example, where cell $(i,j)$ has one solid neighboring cell at $(i+1,j)$ and three neighboring fluid cells, we substitute change $p_{i+1,j}$ in Equation \ref{pressureeq} with the right hand side of Equation \ref{solidpressureeq} and get
+
+\begin{equation}
+\begin{split}
+4p_{i,j} - p_{i-1,j} - &(p_{i,j} + \frac{\rho \Delta x}{\Delta t}{u^*}_{i+1/2,j}) - p_{i,j-1} - p_{i,j+1} = \\ &-\frac{\rho \Delta x}{\Delta t}({u^*}_{i+1/2,j} - {u^*}_{i-1/2,j} + {v^*}_{i,j+1/2} - {v^*}_{i,j-1/2})
+\end{split}
+\label{solidpressureeqfull}
+\end{equation}
+
+which can be simplified to
+
+\begin{equation}
+3p_{i,j} - p_{i-1,j} - p_{i,j-1} - p_{i,j+1} = -\frac{\rho \Delta x}{\Delta t}(- {u^*}_{i-1/2,j} + {v^*}_{i,j+1/2} - {v^*}_{i,j-1/2})
+\end{equation}
+
+We know have everything we need to know to build a linear system of the pressure equations $Ap = b$.
+
+\begin{algorithm}
+\caption{Building right hand side $b$}
+\begin{algorithmic}
+\STATE b = empty grid
+\STATE scale = $-\frac{\rho\Delta x}{\Delta t}$
+\FOR{$i=0$ to $N_x$}
+\FOR{$j=0$ to $N_y$}
+\IF{cell $(i-1,j)$ is not solid}
+\STATE b(i,j) += ${u^*}_{i-1/2,j}$
+\ENDIF
+\IF{cell $(i+1,j)$ is not solid}
+\STATE b(i,j) += ${u^*}_{i+1/2,j}$
+\ENDIF
+\IF{cell $(i,j-1)$ is not solid}
+\STATE b(i,j) += ${v^*}_{i,j-1/2}$
+\ENDIF
+\IF{cell $(i,j+1)$ is not solid}
+\STATE b(i,j) += ${v^*}_{i,j+1/2}$
+\ENDIF
+\STATE b(i,j) *= scale
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\label{build rhs}
+\end{algorithm}
+
+In $A\vec{p} = \vec{b}$, $A$ is a sparse matrix. Equation \ref{pressureeq} is in fact a Laplacian equation in disguise. This means, at maximum, we only need to store 7 elements per row in the sparse matrix $A$. In Algorithm \ref{buildA}, we will use the notation of ${A_{i,j}}^{\{center, left, right, bottom, top\}}$ where the bottom index $(i,j)$ tells us which row in $A$ it corresponds to and the top index tells us which element on the row it is.
+
+\begin{algorithm}
+\caption{Building Sparse Matrix A}
+\begin{algorithmic}
+\STATE A = empty sparse matrix
+\FOR{$i=0$ to $N_x$}
+\FOR{$j=0$ to $N_y$}
+\IF{cell (i,j) is fluid}
+\STATE temp = 4
+
+\IF{cell (i+1,j) is solid}
+\STATE temp -= 1
+\ELSIF{cell (i+1,j) is fluid}
+\STATE ${A_{i,j}}^{right} = -1$
+\ENDIF
+
+\IF{cell (i-1,j) is solid}
+\STATE temp -= 1
+\ELSIF{cell (i-1,j) is fluid}
+\STATE ${A_{i,j}}^{left} = -1$
+\ENDIF
+
+\IF{cell (i,j+1) is solid}
+\STATE temp -= 1
+\ELSIF{cell (i,j+1) is fluid}
+\STATE ${A_{i,j}}^{top} = -1$
+\ENDIF
+
+\IF{cell (i,j-1) is solid}
+\STATE temp -= 1
+\ELSIF{cell (i,j-1) is fluid}
+\STATE ${A_{i,j}}^{bottom} = -1$
+\ENDIF
+
+\STATE ${A_{i,j}}^{center} = $ temp
+
+\ENDIF
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\label{buildA}
+\end{algorithm}

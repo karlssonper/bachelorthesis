@@ -1,0 +1,66 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\begin{document}
+
+\title{FLIP Water Simulation using a Multigrid Pressure Solver}
+\author{Per Karlsson}
+\date{February 2014}
+\maketitle
+
+\include{abstract}
+
+\tableofcontents
+\setcounter{tocdepth}{2}
+
+\newpage
+\section{Introduction}
+\include{ch1/background}
+\include{ch1/purpose}
+\include{ch1/structure}
+
+\newpage
+\section{Fundamentals}
+\include{ch2/navierstokes}
+\include{ch2/mac}
+\include{ch2/levelset}
+\include{ch2/cfl}
+\include{ch2/overview}
+
+\newpage
+\section{Particles}
+\include{ch3/init}
+\include{ch3/particlesToGrid}
+\include{ch3/gridToParticles}
+\include{ch3/advect}
+
+\newpage
+\section{Surface tracking}
+In each substep we need to calculate where the surface of the water is from the given particles. The original FLIP report suggests the use of an implicit function where the input is a set of nearby particles weigthed by a kernel. In this report we will choose a simpler method by just tagging cells as fluid, set them to be close to the surface and then from there use methods to propogate Equation \ref{TODO} (The eiokonal equation).
+\include{ch4/createlevelset}
+\include{ch4/reinitialize}
+\include{ch4/extrapolate}
+
+\newpage
+\section{Solving for pressure}
+\input{ch4/intro}
+\include{ch4/pressureequations}
+\include{ch4/boundary}
+\include{ch4/gauss}
+
+%\newpage
+%\section{Results}
+
+%\newpage
+%\section{Discussion}
+
+%\newpage
+%\section{Conclusion}
+
+\newpage
+\include{ref}
+
+\end{document}

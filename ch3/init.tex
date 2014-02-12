@@ -1,0 +1,31 @@
+\subsection{Creating particles}
+
+Before we run the simulation we need to create the particles representing the volume of the water. To do this we need a function that tells us if a point in space $\vec{x}$ is inside our outside of the initial shape of the water. The distribution of particles depends on the size of the grid used. For a two dimensional cell that is completley inside of the water we create $c_p$ particles. The initial FLIP report suggests the use of $c_p = 4$ with particles jittered from the a subgrid of the cell. Less particles tend to create gaps in the simulation and more particles create unnecessary noise. 
+
+\begin{algorithm}
+\caption{Creating particles from an initial water shape}
+\begin{algorithmic}
+\FOR{$i=0$ to $N_x$}
+\FOR{$j=0$ to $N_y$}
+\FOR{$k=0$ to $c_p$}
+\STATE p = (i,j)$\cdot \Delta x +\frac{random(-1,1) \cdot \Delta x}{2}$
+\IF{p is inside water and $\phi_s(p) > 0$}
+\STATE create particle at p
+\ENDIF
+\ENDFOR
+\ENDFOR
+\ENDFOR
+\end{algorithmic}
+\label{createalgorithm}
+\end{algorithm}
+
+In Algorithm \ref{createalgorithm}, p is a two dimensional vector. {\it random(a,b)} is a function that returns a random value evenly distributed between $a$ and $b$. The $\phi_s > 0$ is a solid level set check to see if the position is outside of the solid.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=80mm]{ch3/create.png}
+\caption{A simple caption}
+\label{createexample}
+\end{figure}
+
+Figure \ref{createexample} shows a basic example of an initial solid level set $\phi_s$ colored grey and an closed water volume in blue.

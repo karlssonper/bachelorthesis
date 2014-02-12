@@ -1,0 +1,12 @@
+\subsection{CFL condition}
+
+An important parameter for the simulation is going to be $\Delta t$, i.e how much in time do we step forward after each simulation step. The goal of this report is not to produce real-time simulation but instead focusing on find an as accurate solution as possible. To guarantee that we are not taking too large timestep, we are going to respect the CFL condition. The CFL condition, named after the mathematicians Courant, Friedrichs and Lewy is a condition for convergence which basically says that if you let your timestep $\Delta t$ and sampling size $\Delta x$ in the limit go to zero, then your solution should converge to the exact solution.
+
+In this report we are going to following the same approach mentioned in [REFERENCE] to decide $\Delta t$. The formula to decide the timestep has the following character:
+
+\begin{equation}
+\Delta t = \alpha \frac{\Delta x}{max|\vec{u}|}
+\label{cfl}
+\end{equation}
+
+where $\alpha$ is the CFL number. Note that the CFL number is not the same as the CFL condition. The interpreation of this expression is basically saying that the timestep is restricted so that no information in the grid can be propogated faster than at maximum one grid cell per substep. For example, let us imagine we are advecting temperature $q$ in the vector field and that in one cell, this the temperature is hot. Equation \ref{cfl} says that the hot spot only move at maximum of one grid cell per $\Delta t$ subtep and is guaranteed to not skip cells where the velocity field drasticly change its direction.

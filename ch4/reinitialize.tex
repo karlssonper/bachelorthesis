@@ -1,0 +1,133 @@
+\subsection{Reinitializing the Level Set}
+
+The goal of the reinitialzing step is to make sure that the gradient of the level set is always a unit vector, i.e the length is 1. To do this we will use a method called fast sweeping, which sweeps and propogates the solution of an iterative approach in different directions. Before we talk more about the fast sweep algorithm itself, let us write down and evaluate tha gradiant of $\phi$ and the Euikonal equation in two dimensions
+
+\begin{equation}
+\nabla \phi = (\frac{\partial \phi}{\partial x}, \frac{\partial \phi}{\partial y})
+\end{equation}
+
+\begin{equation}
+\begin{split}
+|\nabla \phi| &= \sqrt{{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2} \\
+&= 1
+\end{split}
+\label{evaleiokanl}
+\end{equation}
+
+We can simplify Equation \ref{evaleiokanl} even further by taking advatange of the fact that $1^2 = 1$.
+
+\begin{equation}
+\begin{split}
+{(\sqrt{{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2})}^2 &= 1^2 \\
+{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2 &= 1
+\end{split}
+\label{noniterativeversion}
+\end{equation}
+
+We can now turn Equation \ref{noniterativeversion} into an discrete version and therefore making it possible to solve it iteratively. Let us approximate the partial derivates with backward differences
+
+\begin{equation}
+\begin{split}
+\frac{\partial \phi}{\partial x} &\approx \frac{\phi_{i,j} - \phi_{i-1,j}}{\Delta x} \\
+\frac{\partial \phi}{\partial y} &\approx \frac{\phi_{i,j} - \phi_{i,j-1}}{\Delta x}
+\end{split}
+\label{phiapproxeq}
+\end{equation}
+
+If we then plug in Equation \ref{phiapproxeq} into Equation \ref{noniterativeversion} we get
+
+\begin{equation}
+\begin{split}
+{(\frac{\phi_{i,j} - \phi_{i-1,j}}{\Delta x})}^2 + {(\frac{\phi_{i,j} - \phi_{i,j-1}}{\Delta x})}^2 &= 1 \\ 
+({\phi_{i,j}}^2 - 2\phi_{i,j}\phi_{i-1,j} + {\phi_{i-1,j}}^2) + 
+({\phi_{i,j}}^2 - 2\phi_{i,j}\phi_{i,j-1} + {\phi_{i,j-1}}^2)
+&= {\Delta x}^2 \\
+2{\phi_{i,j}}^2 - 2\phi_{i,j}(\phi_{i-1,j} + \phi_{i,j-1}) + {\phi_{i-1,j}}^2 + {\phi_{i,j-1}}^2 - {\Delta x}^2 &= 0 \\
+{\phi_{i,j}}^2 - \phi_{i,j}(\phi_{i-1,j} + \phi_{i,j-1}) + \frac{{\phi_{i-1,j}}^2 + {\phi_{i,j-1}}^2 - {\Delta x}^2}{2} &= 0
+\end{split}
+\label{phisimplified}
+\end{equation}
+
+To simply things abit, let us store the non $\phi_{i,j}$ parts in temporary variables
+\begin{equation}
+\begin{split}
+b &= \phi_{i-1,j} + \phi_{i,j-1} \\
+c &= \frac{{\phi_{i-1,j}}^2 + {\phi_{i,j-1}}^2 - {\Delta x}^2}{2}
+\end{split}
+\label{variablesreinit}
+\end{equation}
+
+Equation \ref{phisimplified} can the be put on the form:
+
+\begin{equation} 
+{\phi_{i,j}}^2 - \phi_{i,j} b + c = 0
+\end{equation}
+
+Which is a standard quadratic equation. Rearraning the terms we get:
+
+\begin{equation} 
+\begin{split}
+{\phi_{i,j}}^2 - \phi_{i,j} b + c &= 0 \\
+{(\phi_{i,j} - \frac{b}{2})}^2  = b^2 - c \\
+\phi_{i,j} =  \frac{b}{2} \pm \sqrt{b^2 - c}
+\end{split}
+\label{solvephi}
+\end{equation}
+
+Equation \ref{solvephi} could potentionally have two real solutions ${\phi_{i,j}}^a$ and ${\phi_{i,j}}^b$. We pick the smaller value of the two as our solution. 
+
+\begin{equation}
+{\phi_{i,j}}^{new} = min({\phi_{i,j}}^a, {\phi_{i,j}}^b)
+\end{equation}
+
+Another condition we apply is that the new solution to ${\phi_{i,j}}^{new}$ has to be smaller than the previous value ${\phi_{i,j}}^{n}$. This is why it was important to pick $D >> \Delta x$ in the previous section. It also means that we are only propogating level set from the surface and inwards/outwards and not from the center of the fluid towars the surface.
+
+\begin{equation}
+{\phi_{i,j}}^{n+1} = 
+\left\{
+\begin{array}{ll}
+{\phi_{i,j}}^{new} & \mbox{if ${\phi_{i,j}}^{new} < {\phi_{i,j}}^{n}$} \\
+{\phi_{i,j}}^{n} & \mbox{if ${\phi_{i,j}}^{new} > {\phi_{i,j}}^{n}$}
+\end{array}
+\right.
+\end{equation}
+
+Now that we have an iterative way of solving the eikonal equation, let us talk more about the fast sweeping method. Fast sweeping for solving the eiokonal equation was introduced by TODO. The fundametals of the method is that you sweep your domain in every possible direction which basically tells you in which order to update the cells. In a two dimensional case, there are only four different directions:
+
+\begin{itemize}
+\item left to right, bottom to top
+\item left to right, top to bottom
+\item right to left, bottom to top
+\item right to left, top to bottom
+\end{itemize}
+
+Depending on the sweeping order, the approximation of the partial derivates in Equation \ref{phiapproxeq} is different. The goal with fast sweeping is to use data from the same sweep and therefore have faster convergence. For example, if we are sweeping from left to right, it makes sense to approximate the horizontal partial derivative with $\phi_{i,j} - \phi_{i-1,j}$ since $\phi_{i-1,j}$ was just updated. However, if we are sweeping from right to left, then it is better to approximate the horizontal partial derivative with $\phi_{i,j} - \phi_{i+1,j}$. We need to take this into account when we are solving Equation \ref{solvephi}.
+
+\begin{equation}
+\frac{\partial \phi}{\partial x} \approx
+\left\{
+\begin{array}{ll}
+\frac{\phi_{i,j} - \phi_{i-1,j}}{\Delta x} & \mbox{if horizontal sweeping is left to right} \\
+\frac{\phi_{i,j} - \phi_{i+1,j}}{\Delta x} & \mbox{if horizontal sweeping is right to left} \\
+\end{array}
+\right.
+\end{equation}
+
+\begin{equation}
+\frac{\partial \phi}{\partial y} \approx
+\left\{
+\begin{array}{ll}
+\frac{\phi_{i,j} - \phi_{i,j-1}}{\Delta x} & \mbox{if vertical sweeping is bottom to top} \\
+\frac{\phi_{i,j} - \phi_{i,j+1}}{\Delta x} & \mbox{if vertical sweeping is top to bottom} \\
+\end{array}
+\right.
+\end{equation}
+
+Figure \ref{sweeppic} shows an example of update order when sweeping from left to right and bottom to right.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=80mm]{ch4/sweep.png}
+\caption{A simple caption}
+\label{sweeppic}
+\end{figure}
