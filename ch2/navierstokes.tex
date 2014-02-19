@@ -3,7 +3,7 @@
 Most fluid research in computer graphics is based on the famous incompressible Navier-Stokes equations. The equations can be written in many different ways but usually it can be seen as
 
 \begin{equation}
-du + u* + p = g
+\frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u} + \frac{1}{\rho}\nabla p = g
 \end{equation}
 
 \begin{equation}
@@ -13,7 +13,7 @@ du + u* + p = g
 In Equation 1, $\vec{u}$ is the velocity field of the fluid, $\rho$ is the pressure, $\vec{f}$ represent all the external forces acting on the fluid (such as gravity) and $v$ is the viscosity constant. This report empashizes on liquid simulations and in particular, water simulations. Water is, by nature, a very non viscious fluid. This means that the term in the Navier-Stokes equations that involves viscousity is relative less important and can be neglected. If we drop the viscousity term in Equation 1, we get
 
 \begin{equation}
-du + u* + p = g
+\frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u} + \frac{1}{\rho}\nabla p = g
 \end{equation}
 
 which is also known as the Euler fluid equations. The fluid we are now trying to simulate is called an inviscid fluid. Even though we have removed the viscousity from the equations, it still means that the fluid we simulate can look viscious. This is because of the numerical methods and the errors they introduce. An important reason we prefer the hybrid Lagrangian/Eulerian method in this report is so we can avoid a lot of the numerical dissipation shown in pure grid based solutions that involes a lot of linear interpolation. 

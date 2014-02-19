@@ -6,7 +6,7 @@
 \usepackage{amsmath}
 \begin{document}
 
-\title{FLIP Water Simulation using a Multigrid Pressure Solver}
+\title{FLIP Water Simulation using Multigrid Pressure Solver}
 \author{Per Karlsson}
 \date{February 2014}
 \maketitle
@@ -18,13 +18,14 @@
 
 \newpage
 \section{Introduction}
+\input{ch1/intro}
 \include{ch1/background}
-\include{ch1/purpose}
-\include{ch1/structure}
+%\include{ch1/purpose}
+%\include{ch1/structure}
 
 \newpage
 \section{Fundamentals}
-\include{ch2/navierstokes}
+\input{ch2/navierstokes}
 \include{ch2/mac}
 \include{ch2/levelset}
 \include{ch2/cfl}
@@ -32,7 +33,7 @@
 
 \newpage
 \section{Particles}
-\include{ch3/init}
+\input{ch3/init}
 \include{ch3/particlesToGrid}
 \include{ch3/gridToParticles}
 \include{ch3/advect}
@@ -50,12 +51,14 @@ In each substep we need to calculate where the surface of the water is from the 
 \include{ch4/pressureequations}
 \include{ch4/boundary}
 \include{ch4/gauss}
+\include{ch4/restrictprolong}
+\include{ch4/multigrid}
 
-%\newpage
-%\section{Results}
+\newpage
+\section{Results}
 
-%\newpage
-%\section{Discussion}
+\newpage
+\include{discussion}
 
 %\newpage
 %\section{Conclusion}
