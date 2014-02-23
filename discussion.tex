@@ -1,6 +1,6 @@
 \section{Discussion}
 \subsection{Improving Boundary Conditions}
-In chapter TODO we assumed that the boundary conditions were always lined up perfectly with the grid cells. We also assumed that the velocity of all solids were zero. If we would allow solids to have a velocity $\vec{u^{solid}}$, Equation \ref{TODO} has to be changed to
+In chapter 5 we assumed that the boundary conditions were always aligned perfectly with the grid cells. We also assumed that the velocity of all solids were zero. If we would allow solids to have a velocity $\vec{u^{solid}}$, Equation \ref{solidveleq} has to be changed to
 
 \begin{equation}
 u^{solid}_{i+1/2,j}  = {u^*}_{i+1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i+1,j} - p_{i,j}}{\Delta x}
@@ -11,12 +11,17 @@ The more complicated case when setting up the pressure equations is when a cell 
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=80mm]{ch3/create.png}
-\caption{A simple caption}
+\begin{subfigure}[]{}
+\includegraphics[height=41mm]{img/boundary1.pdf}
+\end{subfigure}
+\begin{subfigure}[]{}
+\includegraphics[height=41mm]{img/boundary2.pdf}
+\end{subfigure}
+\caption{Regular (a) vs irregular (b) solid boundaries.}
 \label{boundarycases}
 \end{figure}
 
-Batty et al [2] presented a way to deal with irregular boundary geometry. It would be interesting to apply their ideas to the fluid multigrid solver in this thesis. When setting up the pressure equations, we would need a way to find out how much of a cell is covered by fluid. Even more specific, how much of the area nearby an edge is covered by fluid? The only change we would have to make would be in Equation \ref{pressureeq}. If $m$ is the previously mentioned fluid cover function ($0 \leq m \leq 1$), our linear system of equations need to satisfy the following:
+Batty et al \cite{batty} presented a way to deal with irregular boundary geometry. It would be interesting to apply their ideas to the fluid multigrid solver in this thesis. When setting up the pressure equations, we would need a way to find out how much of a cell is covered by fluid. Even more specific, how much of the area nearby an edge is covered by fluid? The only change we would have to make would be in Equation \ref{pressureeq}. If $m$ is the previously mentioned fluid cover function ($0 \leq m \leq 1$), our linear system of equations need to satisfy the following:
 
 \begin{equation}
 \begin{split}
@@ -40,11 +45,11 @@ We are constantly redefining the surface each step based on the position of the 
 \label{advectlevelset}
 \end{equation}
 
-Fedkiw and Osher[TODO] introduced high-order methods for solving Equation \ref{advectlevelset}. If we advect both the level set and all particles every substep there will be cases where particles exists in regions where $\phi > 0$. What to do with those particles is not clear. One option would be to only advect the escaped particles in the extrapolated velocity field and not let them affect the pressure solve.
+Fedkiw and Osher \cite{osher} introduced high-order methods for solving Equation \ref{advectlevelset}. If we advect both the level set and all particles every substep there will be cases where particles exists in regions where $\phi > 0$. What to do with those particles is not clear. One option would be to only advect the escaped particles in the extrapolated velocity field and not let them affect the pressure solve.
 
 \subsection{Parallel implementation}
 
-Solving for pressure is the largest and the most computational expensive part of the FLIP algorithm. Most fluid simulators have traditionally been using a preconditioned conjugate gradient pressure solver. A very popular preconditioner to use is the Incomplete Cholesky Factorization. Although making the conjugate gradient method to converge faster, this preconditioner cn not be run in parallell which is unfortunate since one has to apply the preconditioner before every conjugate gradient step. The multigrid approach has the big advantage that every step is easy to port from a serial implementation to a parallel one. Given a grid size of $N_x$ and $N_y$, one can simply divide the grid into subregions proportional to the number of cores present on the arcitechure performing the computations. One of the benefits using the Red and Black Gauss-Seidel iteration scheme presented in Chapter TODO is that it does not matter in which order the subregions are updated in an iteration step since we are guaranteed that all neighboring cells had their values updated in previous step. The restriction and prolongation operators are also easy to perform in parallel since there are no read/write conflicts and once again the grid can be divided into subregions for each core available. Other trivial steps to run in parallel out of the items presented in the outline of the algorithm in Chapter TODO is:
+Solving for pressure is the largest and the most computational expensive part of the FLIP algorithm. Most fluid simulators have traditionally been using a preconditioned conjugate gradient pressure solver. A very popular preconditioner to use is the Incomplete Cholesky Factorization. Although making the conjugate gradient method to converge faster, this preconditioner cn not be run in parallell which is unfortunate since one has to apply the preconditioner before every conjugate gradient step. The multigrid approach has the big advantage that every step is easy to port from a serial implementation to a parallel one. Given a grid size of $N_x$ and $N_y$, one can simply divide the grid into subregions proportional to the number of cores present on the arcitechure performing the computations. One of the benefits using the Red and Black Gauss-Seidel iteration scheme presented in Chapter 5 is that it does not matter in which order the subregions are updated in an iteration step since we are guaranteed that all neighboring cells had their values updated in previous step. The restriction and prolongation operators are also easy to perform in parallel since there are no read/write conflicts and once again the grid can be divided into subregions for each core available. Other trivial steps to run in parallel out of the items presented in the outline of the algorithm in Chapter 2 are:
 
 \begin{enumerate}
 \item Mark cells fluid
@@ -57,4 +62,4 @@ Solving for pressure is the largest and the most computational expensive part of
 Transfering the particle velocities to the grid is harder to run in parallel because of the fact that two particles could potentially be writing to the same velocity in the grid at the same time and therefore introduce a write condition. This motivates us to use a special data structure for particles, storing them in different banks depending on their spatial position. Similar to the Red and Black Gauss-Seidel, we only update regions in parallel that are not neighbors and we can therefore assume that inside a thread there will never be a write condition.
 \newline
 \newline
-Reinitializing the level set and extrapolating velocites outside of the fluid region are also a bit more complicated since these steps are both using the fast sweeping method. In [TODO] explains an algorithm that solves the Eiokonal equation in parallel using a fast sweeping approach. Similar method can be used to extrapolate the velocities as well.
+Reinitializing the level set and extrapolating velocites outside of the fluid region are also a bit more complicated since these steps are both using the fast sweeping method. Jeong et al\cite{jeong}  explains an algorithm that solves the Eiokonal equation in parallel using a fast sweeping approach. Similar method can be used to extrapolate the velocities as well.
