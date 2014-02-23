@@ -1,1 +1,12 @@
 \subsection{Purpose}
+
+The main goal of this thesis is to examine if it is possible to run the multigrid pressure solver method in a FLIP fluid simulation. More specifically, the type of fluid simulation being evaluated is going to be a water simulation. The simulation in this report is going to be in two dimensions instead of three to make equations and explenations simpler. Although two dimensions, any method presented in thesis needs to have a corresponding three dimensional method that is straightforward and intuitive to implement, i.e we can not take advantage of being in a two dimensional environment that is less complex and use methods that do not scale well in three dimensions. 
+\newline
+\newline 
+Speed is another important factor in this work. There are not going to be any constraints that requires the simulation to run in real-time but how fast methods are still going to be an important factor. The purpose of the simulation is to eventually end up in a video. To be practical, it is convenient if the simulations are fast which leads to faster iterations. This decreases the time and effort an artist has to spend in order to complete a sequence with a fluid simulation in it.
+\newline
+\newline
+The Lagrangian part of the FLIP method in this thesis is going to be based on the original computer graphics FLIP paper published by Zhou and Bridson\cite{zhu}. The multigrid pressure solver discussed in this report is inspired by the multigrid implementation presented by Mueller\cite{mueller}.
+\newline
+\newline
+Lastly, there will be restrictions on the grid dimensions of the fluid simulations and the boundary conditions of the fluid itself. To simplify the the multigrid method, the size of a dimension has to be a be a power of two. This is not a necessary condition but it will make it easier to explain the basics of a multigrid approach. When setting up the boundary conditions in the pressure equations, it will be assumed that the solid boundary walls are not moving, i.e the velocity is zero. This assumptions makes it easier to set up the pressure equations.

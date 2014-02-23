@@ -1,11 +1,11 @@
 \subsection{Extrapolate velocities}
 
-Sometimes it happens that some of the edges on the grid are close to the surface but no particle was close enough to update the velocity of the edge. We still want this edges to be part of our pressure solve on the grid. This will make it easier to setup the pressure equations later on. This means we have to guarantee that we have valid velocities on the grid where the level set tells us an edge or cell is inside or close to the surface of the fluid. To ensure this, we will extrapolate the velocities from the surface and outwards with the help of the level set. Remember from section TODO that the gradient of the level set is the same as the normal of the surface. If we extrapolate the velocities in the direction of the normal, the derivate of the velocities along the normal should be zero. Figure \ref{extrapic} shows an example of extrapolating the velocities along the normal.
+Sometimes it happens that some of the edges on the grid are close to the surface but no particle was close enough to update the velocity of the edge. We still want this edges to be part of our pressure solve on the grid. This will make it easier to setup the pressure equations later on. This means we have to guarantee that we have valid velocities on the grid where the level set tells us an edge or cell is inside or close to the surface of the fluid. To ensure this, we will extrapolate the velocities from the surface and outwards with the help of the level set. Remember from section 2.3 that the gradient of the level set is the same as the normal of the surface. If we extrapolate the velocities in the direction of the normal, the derivate of the velocities along the normal should be zero. Figure \ref{extrapic} shows an example of extrapolating the velocities along the normal.
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=60mm]{ch4/extra.png}
-\caption{A simple caption}
+\includegraphics[width=60mm]{img/extrapolate.pdf}
+\caption{The velocities of the cells inside the fluid (marked as solid arrows) are extrapolated in the surface normal direction (marked as dashed arrows).}
 \label{extrapic}
 \end{figure}
 

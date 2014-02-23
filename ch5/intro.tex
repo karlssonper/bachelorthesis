@@ -1,0 +1,25 @@
+To guarantee the velocity field is divergence free we need to solve the pressure equations. This step is called the Projection step. We are going to use an approach Alexandre Chorin introduced in 1967 \cite{chorin}. The key is to split the Euler fluid equations into two steps and solve the sequentially. In the first step we solve for the intermediate velocity field $\vec{u}^*$. This vector field is not divergence free but we use it as an input to the second step of the splitting. We will set up the pressure equations later on in such way that removing the pressure gradient $\nabla p$ from the intermediate $\vec{u}^*$ will make $\vec{u}^{n+1}$ divergence-free.
+
+\begin{equation}
+\vec{u}^{n+1} = \vec{u}^* - \frac{\Delta t}{\rho} \nabla p
+\label{pressuredivfreeeq}
+\end{equation}
+
+If we rearrange Equation \ref{pressuredivfreeeq}, we get a substitution for the pressure term in the Euler fluid equations described in Equation \ref{eulereq}.
+
+\begin{equation}
+\frac{\vec{u}^{n+1} - \vec{u}^*}{\Delta t}= - \frac{1}{\rho} \nabla p
+\label{pressuredivfreeeq}
+\end{equation}
+
+If we approximate $\frac{\partial \vec{u}}{\partial t}$ with $\frac{\vec{u}^{n+1} - \vec{u}^{n}}{\Delta t}$, we can rewrite Equation \ref {eulereq} to
+
+\begin{equation}
+\begin{split}
+\frac{\partial \vec{u}}{\partial t}  &= -\vec{u} \cdot \nabla \vec{u} - \frac{1}{\rho}\nabla p + \vec{f}\\
+\frac{\vec{u}^{n+1} - \vec{u}^{n}}{\Delta t}  &= - \vec{u} \cdot \nabla \vec{u} + \frac{\vec{u}^{n+1} - \vec{u}^*}{\Delta t} + \vec{f} \\
+\vec{u}^* & = \vec{u}^n - \Delta t(\vec{u} \cdot \nabla \vec{u}) + \Delta t\vec{f}
+\end{split}
+\end{equation}
+
+In our hybrid FLIP simulation, getting the intermediate velocity field  $\vec{u}^*$ each substep is easy where the Lagrangian particle update gives the use the advection terms and the applying the integrated force $\vec{f}$ over timestep $\Delta t$ is trivial. The tricky part of the pressure solving step is setting up the pressure equations that enforces an incompressible fluid.

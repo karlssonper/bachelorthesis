@@ -1,0 +1,113 @@
+\subsection{The Multigrid method}
+
+One problem with iterative solvers of linear systems of equations is that information propgates very slowly. In Equation \ref{jacobi}, only neighboring cells are part of this expression and therefore information only moves one cell per iteration step. This means that the larger the grid size $N_x, N_y$ is, the longer it takes to reach convergence. We are not guaranteed that our velocity field is divergence-free if the solution to $Ap=b$ does not convergence. However, choosing a low resolution grid introduces other non-wanted artifacts. An approach with high accuracy and fast convergence is desirable. The multigrid method tries to satisfy this where the main idea is to solve the linear system of equations in different resolutions and then use restriction and prolongations operations to transfer the answer from one resolution to another. There are different options on how to reach convergence and in this report we will focus on \emph{Full Cycle} and \emph{V-Cycle}. FIgure \ref{multigrid} demonstrates the difference between the two. Note that the Full Cycle uses incremental V-Cycles, something we can take advantage of when implementing the Full Cycle.
+
+\begin{figure}[ht!]
+\centering
+\begin{subfigure}[]{0.3\textwidth}
+\includegraphics[height=41mm]{img/vcycle.pdf}
+\end{subfigure}
+\begin{subfigure}[]{0.3\textwidth}
+\includegraphics[height=41mm]{img/fullcycle.pdf}
+\end{subfigure}
+\caption{The two different multigrid schemes presented in this report, \emph{V-Cycle (left)} and \emph{Full cycle (right)}.}
+\label{multigrid}
+\end{figure}
+
+
+Using restriction and prolongation on the pressure grid in the V-cycle acts as a low pass filter and this an unwanted effect. Instead of moving the pressure solution from one resolution to another, we will use restriction and prolongation on the residual $r^{M-n} = b^{M-n} - A^{M-n}p^{M-n}$. Instead of solving $Ap = b$ in each resolution, we solve $Ap = r$. To update the pressure of level $M-n$ we use the linear combination of $p^{M-n}$ and $prolong(p^{M-n-1})$.
+
+\begin{equation}
+p^{M-n}_{n+1} = p^{M-n}_n + prolong(p^{M-n-1})
+\end{equation}
+
+\begin{equation}
+r^{M-n} = b^{M-n} - A^{M-n} p^{M-n}_n 
+\end{equation}
+
+Equation \ref{multigridsplit} explains why using a linear combination of two different resolutions (where the lower resolution one have had the prolongation operator applied to it) work in the V-cycle update.
+
+\begin{equation}
+\begin{split}
+A^{M-n} p^{M-n}_{n+1} &= b^{M-n} \\
+A^{M-n} (p^{M-n}_n + prolong(p^{M-n-1})) &= b^{M-n} \\
+A^{M-n} prolong(p^{M-n-1}) +  \underbrace{ A^{M-n} p^{M-n}_n -  b^{M-n} }_\text{$-r^{M-n}$} &= 0 \\
+A^{M-n} prolong(p^{M-n-1})  &= r^{M-n}
+\end{split}
+\label{multigridsplit}
+\end{equation}
+
+If $M$ is the inital resolution number for the grid, we can specify a lower minimum resolution number $K$. Solving the pressure equations for grids with dimension sizes small as $1$ and $2$ makes little sense since we can't even specify the pressure equations. 
+
+\begin{algorithm}
+\caption{Multigrid method}
+\begin{algorithmic}[1]
+\FOR{$m = M - 1$ down to $K$}
+\STATE $\phi^m$ = restrict($\phi^{m+1}$)
+\STATE $\phi^m_s$ = restrict($\phi^{m+1}_s$)
+\ENDFOR
+
+\FOR{$m = M$ down to $K$}
+\STATE Build sparse matrix $A^m$
+\ENDFOR
+
+\STATE Build right hand side $b$
+\STATE Initial guess $p^M = 0$
+
+\FOR{i = 1 to $N_{\text{Full cycle}}$}
+\STATE Full cycle
+\ENDFOR
+
+\FOR{i = 1 to $N_{\text{V cycle}}$}
+\STATE V cycle(M)
+\ENDFOR
+
+\end{algorithmic}
+\label{multigridalgorithm}
+\end{algorithm}
+
+
+\begin{algorithm}
+\caption{V cycle(m)}
+\begin{algorithmic}[1]
+
+\FOR{i = 1 to $N_{\text{sweep}}$}
+\STATE Gauss-Seidel to solve $A^mp^m = r^m$
+\ENDFOR
+
+\STATE $r^m = r^m - A^mp^m$
+\STATE $r^{m-1} = restrict(r^m)$
+\STATE $p^{m-1} = 0$
+\STATE V cycle(m-1)
+\STATE $p^m = p^m + prolong(p^{m-1})$
+
+\FOR{i = 1 to $N_{\text{sweep}}$}
+\STATE Gauss-Seidel to solve $A^mp^m = r^m$
+\ENDFOR
+
+\end{algorithmic}
+\label{multigridalgorithm}
+\end{algorithm}
+
+In Algorithms \ref{vcyclealgorithm}, \ref{vcyclealgorithm} and \ref{fullcyclealgorithm}, we only use the restriction operators on the surface tracking level sets and the residual. The prolongation operator is only used on the pressure grids. 
+
+\begin{algorithm}
+\caption{Full cycle()}
+\begin{algorithmic}[1]
+
+\STATE $p^{tmp} = p^M$
+\FOR{m = K to M}
+\IF{$m \neq K$}
+\STATE $p^m = prolong(p^{m-1})$
+\ENDIF
+\STATE V cycle(m)
+
+\ENDFOR
+
+\STATE $p^M = p^{tmp} + p^M$
+
+\end{algorithmic}
+\label{fullcyclealgorithm}
+\end{algorithm}
+
+We know have all the components we need to solve the pressure equations and make sure the velocity field is divergence free. As far as the multigrid method goes, there are three variables we can tweak for performance and convergence rate. The first one is $N_{sweep}$ that determines how many iterations of Gauss-Seidel are performed in each resolution. The other two, $N_{\text{Full cycle}}$ and $N_\text{V cycle}$, changes the number of step for each cycle method. In theory the Full cycle is faster but in practise with implementations, all the restriction and prolongation operations can be expensive. In general, the larger $N_{sweep}$ is, the smaller can $N_{\text{Full cycle}}$ and $N_\text{V cycle}$ be and vice verse. The most optimal choice of parameters is situational and how to automatically detect the different scenarios is beyond this report. 

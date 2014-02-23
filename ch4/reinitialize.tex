@@ -92,7 +92,7 @@ Another condition we apply is that the new solution to ${\phi_{i,j}}^{new}$ has 
 \right.
 \end{equation}
 
-Now that we have an iterative way of solving the eikonal equation, let us talk more about the fast sweeping method. Fast sweeping for solving the eiokonal equation was introduced by TODO. The fundametals of the method is that you sweep your domain in every possible direction which basically tells you in which order to update the cells. In a two dimensional case, there are only four different directions:
+Now that we have an iterative way of solving the eikonal equation, let us talk more about the fast sweeping method. Fast sweeping for solving the eiokonal equation was introduced by Zhao\cite{zhao}. The fundametals of the method is that you sweep your domain in every possible direction which basically tells you in which order to update the cells. In a two dimensional case, there are only four different directions:
 
 \begin{itemize}
 \item left to right, bottom to top
@@ -127,7 +127,7 @@ Figure \ref{sweeppic} shows an example of update order when sweeping from left t
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=80mm]{ch4/sweep.png}
-\caption{A simple caption}
+\includegraphics[width=80mm]{img/sweep.pdf}
+\caption{Left to right, bottom to top sweeping order. In an iterative solver, the cells are updated in the order of the blue arrows.}
 \label{sweeppic}
 \end{figure}

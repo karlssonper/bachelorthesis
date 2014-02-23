@@ -18,12 +18,12 @@ In Algorithm \ref{markalgorithm}, a cell will most likely contain several partic
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=130mm]{ch4/marker.png}
-\caption{A simple caption}
+\includegraphics[width=130mm]{img/mark.pdf}
+\caption{Cells with particles inside them as are marked as fluid cells.}
 \label{markerexample}
 \end{figure}
 
-Then next step in the algorithm is to initialize the level set. This step will not create a valid level set that satisfies Equation \ref{TODO}. To start with, we are just going to set $\phi_{i,j}$ to $-\frac{\Delta x}{2}$ as if the surface could be at the edge of the cell. To cells not marked as fluid we will set the value to $D \cdot \Delta x$ where it is important that $D >> \Delta X$. Typically the initalizing step was run with $D = 1000$.
+Then next step in the algorithm is to initialize the level set. This step will not create a valid level set that satisfies Equation \ref{eikonaleqfirst}. To start with, we are just going to set $\phi_{i,j}$ to $-\frac{\Delta x}{2}$ as if the surface could be at the edge of the cell. To cells not marked as fluid we will set the value to $D \cdot \Delta x$ where it is important that $D >> \Delta X$. Typically the initalizing step was run with $D = 1000$.
 
 \begin{algorithm}
 \caption{Initalizing the Level Set}
@@ -44,13 +44,4 @@ Then next step in the algorithm is to initialize the level set. This step will n
 \label{particlestogridalgorithm2}
 \end{algorithm}
 
-After the initializing step, the color map of the level set is far from continous as can be seen Figure \ref{initpic}
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=50mm]{ch4/init.png}
-\caption{A simple caption}
-\label{initpic}
-\end{figure}
-
-To make it continuous and satisfy $|\nabla \phi| = 1$, we are going to perform an iterate sollver of the Eikonal equation. This step is sometimes called the reinitializing step in level set literature.
+After this initializing step, the level set is far from continous. To make it continuous and satisfy $|\nabla \phi| = 1$, we are going to perform an iterate sollver of the Eikonal equation. This step is sometimes called the reinitializing step in level set literature.
