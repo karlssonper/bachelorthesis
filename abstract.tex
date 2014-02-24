@@ -1,11 +1,11 @@
 \begin{abstract}
 \noindent
-This thesis involves an evaluation of the multigrid method for solving systems of differential equations in hybrid particle-grid fluid simulations. The work in this thesis is focused on inviscid incompressible liquid and water simulations and the method of choice is Fluid Implicit Particle, FLIP. All equations and algorithms are presented in a two-dimensional domain but none of the solutions are restricted to two dimensions and it is straightforward to express them in three dimensions.
+This thesis involves an evaluation of the multigrid method for solving systems of differential equations in hybrid particle-grid fluid simulations. The work in this thesis is focused on inviscid incompressible liquid and water simulations and the method of choice is Fluid Implicit Particle (FLIP). Equations and algorithms are presented in but not restricted to a two-dimensional domain, and can easily be extended to three dimensions.
 \newline
 \newline
-The implementation in this thesis is based on the Navier-Stokes fluid equations and the Level Set methods for surface tracking. The fundamentals of these equations and methods are explained in the first chapters and solutions are presented later on. This report tells you how to store explicit particle velocities in an implicit grid and how to integrate particle velocities from a grid. A large portion of this thesis explains the multigrid method and how to implement one for solving the pressure equations needed in a fluid simulation.
+The implementation in this thesis is based on the Navier-Stokes fluid equations and the Level Set methods for surface tracking. The fundamentals of these equations and methods are explained in the first chapters and solutions are presented later on. A large portion of this thesis explains the multigrid method and its implementation for solving the pressure equations needed in a fluid simulation.
 \newline
 \newline
-The results of the multigrid pressure solver in this thesis shows that the method is good enough for non real-time simulations in computer graphics. To test correctness, a comparison between multigrid and the traditional preconditioned conjugate gradient method showed similar results.
+The results of the multigrid pressure solver in this thesis shows that the method is sufficient for non real-time simulations in computer graphics. A comparison between multigrid and the traditional preconditioned conjugate gradient method showed similar results in tests for correctness.
 
 \end{abstract}
