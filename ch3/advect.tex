@@ -4,31 +4,33 @@ The most straight forward approach to update particle positions ${\vec{x}_p}^{n+
 
 \begin{equation}
 {\vec{x}_p}^{n+1} = {\vec{x}_p}^n + \Delta t \vec{u}_p 
+\label{eulerstepeq}
 \end{equation}
-
-We can improve accuracy by using a different time integration scheme. First we need Equation \ref{flipeq} to depend on an arbitrary position $\vec{x}$ and not the position from each particle $\vec{x}_p$.
+\noindent
+We can improve accuracy by using a different time integration scheme. First we need Equation \ref{flipeq} to be a function that uses an arbitrary position $\vec{x}$ as input and not the position from each particle $\vec{x}_p$. We call this function $vel(\vec{x})$.
 
 \begin{equation}
 vel(\vec{x}) = \alpha \cdot bilerp(\vec{u}^{n+1}, \vec{x}) + (1-\alpha) \cdot bilerp(\Delta \vec{u},\vec{x})
-\label{flipeq}
+\label{veleq}
 \end{equation}
-
+\noindent
 We are going to use a second order Runge-Kutta method where we evaluate a mid point and use the mid point to evaluate the velocity of the particle rather than the position of the particle.
 
 \begin{equation}
 {\vec{x}_p}^{n + 1/2} = {\vec{x}_p}^n + \frac{\Delta t}{2} vel(\vec{x}_p)
+\label{halfstepeq}
 \end{equation}
-
-Note that we only use half of the timestep $\Delta t$ to evaluate the in-between position ${\vec{x}_p}^{n+1}$. The final position of a particle in each step can then be set to
+\noindent
+Note that we only use half of the timestep $\Delta t$ in Equation \ref{halfstepeq} to evaluate the in-between position ${\vec{x}_p}^{n+1}$. The final position of a particle in each step can then be set to
 
 \begin{equation}
 {\vec{x}_p}^{n + 1} = {\vec{x}_p}^n + \Delta t \cdot vel({\vec{x}_p}^{n+1/2})
 \end{equation}
-
-After advecting the particles we still need to run an correction just in case some of the particles got stuck in the solid $\phi_s$. The boundary condition of the pressure equations we will cover later in this report are supposed to prevent this to happen but due to numerical errors in our single precision simulation there are still going to be cases where particles intersect the solid. If this is the case, we move the particle out in the normal direction of the solid.
+\noindent
+After advecting the particles we still need to run a correction step in case some of the particles get stuck in the solid $\phi_s$. The boundary condition of the pressure equations (covered later in this report) are supposed to prevent this from happening but due to numerical errors in our single precision simulation there are still going to be cases where particles intersect the solid. If this is the case, we move the particle out in the normal direction of the solid.
 
 \begin{equation}
 {\vec{x}_p}^{correction} = \vec{x}_p + \beta |\phi_s|\nabla\phi_s
 \end{equation}
 
-with $\beta > 1$. If $\beta$ would be exactly 1 then we would only move the particle to surface of the solid. In this report we used $\beta = 1.5$.
+with $\beta > 1$. If $\beta$ would be exactly 1 then we would only move the particle to surface of the solid. In the implementation, $\beta = 1.5$ was used.

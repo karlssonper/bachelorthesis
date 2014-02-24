@@ -1,6 +1,6 @@
 \subsection{Creating the Level Set}
 
-Before we create the level set $\phi$ that represent the surface of our water simulation, we need to mark the cells that we consider fluid. The easiest approach is to go from particle position $\vec{x}_p$ to grid coordinates $(i,j)$ and tag that cell as fluid.
+Before we create the level set $\phi$ that represent the surface of our water simulation, we need to mark the cells we consider being fluid. The easiest approach is to go from particle position $\vec{x}_p$ to grid coordinates $(i,j)$ and tag the cell with those coordinates as fluid.
 
 \begin{algorithm}
 \caption{Marking cells as fluid}
@@ -13,8 +13,8 @@ Before we create the level set $\phi$ that represent the surface of our water si
 \end{algorithmic}
 \label{markalgorithm}
 \end{algorithm}
-
-In Algorithm \ref{markalgorithm}, a cell will most likely contain several particles at once which means that we will write the value $1$ to that cell multiple times. Although unnecessary, this is a very fast operation compared to all the other step in the level set creation and the overhead should not be noticable. Figure \ref{markerexample} shows and example of the marker grid after we run Algorithm \ref{markalgorithm} on an input of particles. Notice that cells with only one particle is still counted as a fluid cell.
+\noindent
+In Algorithm \ref{markalgorithm}, a cell will most likely contain several particles at once which means that we will write the value $1$ to that cell multiple times. Although unnecessary, this is a very fast operation compared to all the other steps in the level set creation and the overhead is not noticeable. Figure \ref{markerexample} shows an example of the marker grid after we run Algorithm \ref{markalgorithm} on an input of particles. Notice that cells with only one particle is still counted as a fluid cell.
 
 \begin{figure}[ht!]
 \centering
@@ -22,8 +22,8 @@ In Algorithm \ref{markalgorithm}, a cell will most likely contain several partic
 \caption{Cells with particles inside them as are marked as fluid cells.}
 \label{markerexample}
 \end{figure}
-
-Then next step in the algorithm is to initialize the level set. This step will not create a valid level set that satisfies Equation \ref{eikonaleqfirst}. To start with, we are just going to set $\phi_{i,j}$ to $-\frac{\Delta x}{2}$ as if the surface could be at the edge of the cell. To cells not marked as fluid we will set the value to $D \cdot \Delta x$ where it is important that $D >> \Delta X$. Typically the initalizing step was run with $D = 1000$.
+\noindent
+Then next step in the algorithm is to initialize the level set. This step will not create a valid level set that satisfies Equation \ref{eikonaleqfirst}. To start with, we set $\phi_{i,j}$ to $-\frac{\Delta x}{2}$ as if the surface could be at the edge of the cell. To cells not marked as fluid we set the value to $D \cdot \Delta x$ where it is important that $D >> \Delta x$. Typically the initializing step is run with $D = 1000$.
 
 \begin{algorithm}
 \caption{Initalizing the Level Set}
@@ -43,5 +43,5 @@ Then next step in the algorithm is to initialize the level set. This step will n
 \end{algorithmic}
 \label{particlestogridalgorithm2}
 \end{algorithm}
-
-After this initializing step, the level set is far from continous. To make it continuous and satisfy $|\nabla \phi| = 1$, we are going to perform an iterate sollver of the Eikonal equation. This step is sometimes called the reinitializing step in level set literature.
+\noindent
+After the initializing step, the level set is far from continuous. To make it continuous and satisfy $|\nabla \phi| = 1$, we are going to iteratively solve the Eikonal equation. This step is sometimes called the reinitializing step in level set literature.

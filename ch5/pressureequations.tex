@@ -1,23 +1,22 @@
 \subsection{Setting up the Pressure Equations}
 
-Before setting up the linear systems for solving the pressure, let us look at the discrete implementation of Equation \ref {pressuredivfreeeq}. The use of MAC grid once again comes in handy since it makes the use of central difference approximations easy and more robust. For each dimension, we perform an pressure update to the velocity field $\vec{u}^{n+1}$ the following way:
+Let us look at the discrete implementation of Equation \ref {pressuredivfreeeq}. The use of a MAC grid comes in handy once again since it makes the use of central difference approximations easy and more robust. For each dimension, we perform a pressure update to the velocity field $\vec{u}^{n+1}$ the following way:
 
 \begin{equation}
 \begin{split}
-{u^{n+1}}_{i+1/2,j} &= {u^*}_{i+1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i+1,j} - p_{i,j}}{\Delta x} \\
-{u^{n+1}}_{i-1/2,j} &= {u^*}_{i-1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i-1,j}}{\Delta x} \\
-{v^{n+1}}_{i,j+1/2} &= {v^*}_{i,j+1/2} - \frac{\Delta t }{\rho}\frac{p_{i,j+1} - p_{i,j}}{\Delta x} \\
-{v^{n+1}}_{i,j-1/2} &= {v^*}_{i,j-1/2} - \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i,j-1/2}}{\Delta x}
+u^{n+1}_{i+1/2,j} &= {u^*}_{i+1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i+1,j} - p_{i,j}}{\Delta x} \\
+u^{n+1}_{i-1/2,j} &= {u^*}_{i-1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i-1,j}}{\Delta x} \\
+v^{n+1}_{i,j+1/2} &= {v^*}_{i,j+1/2} - \frac{\Delta t }{\rho}\frac{p_{i,j+1} - p_{i,j}}{\Delta x} \\
+v^{n+1}_{i,j-1/2} &= {v^*}_{i,j-1/2} - \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i,j-1/2}}{\Delta x}
 \end{split}
 \label{pressurefaceupdateeq}
 \end{equation}
-
-The most important condition is the imcompressible one. We have to guarantee that for every cell in the grid the next velocity field $\vec{u}^{n+1}$is divergence free. If we evaluate the divergence-free condition for a cell on our MAC grid we get the following:
-
+\noindent
+The most important condition is the incompressible one. We have to guarantee that for every cell in the grid, the next velocity field $\vec{u}^{n+1}$is divergence-free. If we evaluate the divergence-free condition for a cell in our MAC grid we get the following:
 \begin{equation}
-\frac{{u^{n+1}}_{i+1/2,j} - {u^{n+1}}_{i-1/2,j}}{\Delta x} + \frac{{v^{n+1}}_{i,j+1/2} - {v^{n+1}}_{i,j-1/2}}{\Delta x} = 0
+\frac{u^{n+1}_{i+1/2,j} - u^{n+1}_{i-1/2,j}}{\Delta x} + \frac{v^{n+1}_{i,j+1/2} - v^{n+1}_{i,j-1/2}}{\Delta x} = 0
 \end{equation}
-
+\noindent
 If we replace the velocities for next step $(n+1)$ with the right hand sides of Equation \ref{pressurefaceupdateeq}, we get
 
 \begin{equation}
@@ -30,8 +29,8 @@ If we replace the velocities for next step $(n+1)$ with the right hand sides of 
 \end{split}
 \label{pressurebeforeeq}
 \end{equation}
-
-If we rearrange the terms in Equation \ref{pressurebeforeeq} we get an expression that is more intuitive to put in a linear system of equations.
+\noindent
+If we rearrange the terms in Equation \ref{pressurebeforeeq}, we get an expression that is more intuitive to put in a linear system of equations.
 
 \begin{equation}
 \begin{split}

@@ -1,7 +1,7 @@
 A single threaded test application was programmed in C++ to evaluate the FLIP water simulation with multigrid as pressure solving method. No external libraries other than the C++ standard library was used in the simulation. The graphics library OpenGL was used to display the simulation where each particle in the FLIP simulation is represented as a blue quad. The simulation generated data for display $24$ times per second.
 \newline
 \newline
-The resolution of the grid in the test application was set to $128$ for both $N_x$ and $N_y$. The size of each side in the grid was set to $1 m$ which gives each cells a witdth of $\Delta x = 0.0078$. As can be seen in the Figure \ref{initialshapae}, the initial shape of the simulation is a halfsphere. The solid wall boundaries are placed at the grid boundaries with one grid cell as the width. No extra solids to collide against was used. Parts of the simulation can be seen in Figure \ref{simresult}. More images of the multigrid simulation can be found in Appendix A. 
+The resolution of the grid in the test application was set to $128$ for both $N_x$ and $N_y$. The size of each side in the grid was set to $1 m$ which gives each cells a width of $\Delta x = 0.0078$. As can be seen in the Figure \ref{initialshapae}, the initial shape of the simulation is a half sphere. The solid wall boundaries are placed at the grid boundaries with one grid cell as the width. No extra solids to collide against were used. Parts of the simulation can be seen in Figure \ref{simresult}. More images of the multigrid simulation can be found in Appendix A. 
 
 \begin{figure}[ht!]
 \centering
@@ -25,8 +25,8 @@ The resolution of the grid in the test application was set to $128$ for both $N_
 \caption{Results of the multigrid simulation.}
 \label{simresult}
 \end{figure}
-
-The multigrid parameters used in Figure \ref{simresult} is $N_{sweep} = 10$ and $N_{\text{Full cycle}} = N_\text{V cycle} = 4$. Figure \ref{lowvshigh} shows the difference between using a low number of cycles vs a high number of cycles. When $N_{\text{Full cycle}}$ and $N_\text{V cycle}$ are set to lower values, we see volume loss artifacts.
+\noindent
+The multigrid parameters used in Figure \ref{simresult} are $N_{sweep} = 10$ and $N_{\text{Full cycle}} = N_\text{V cycle} = 4$. Figure \ref{lowvshigh} shows the difference between using a low number of cycles vs a high number of cycles. When $N_{\text{Full cycle}}$ and $N_\text{V cycle}$ are set to lower values, we see volume loss artifacts.
 
 \begin{figure}[ht!]
 \centering
@@ -41,8 +41,8 @@ The multigrid parameters used in Figure \ref{simresult} is $N_{sweep} = 10$ and 
 \caption{}
 \label{lowvshigh}
 \end{figure}
-
-A preconditioned conjugate gradient, PCG, pressure solver with incomplete cholesky factoziation as the preconditioner was also implemented in the test application to test correctness. For details about the implementation, one can find a detailed explenation in \cite{bridson}. A quick comparison between the multigrid method (with both cycles to be run 4 times) vs PCG can be seen in Figure \ref{pcgvsmulti}. Although different pressure solving methods, they produce solutions that look similar. Images of the full PCG simulation can be found in Appendix B. 
+\noindent
+A preconditioned conjugate gradient, PCG, pressure solver with incomplete cholesky factorization as the preconditioner was also implemented in the test application to test correctness. For information about the implementation, one can find a detailed explanation in \cite{bridson}. A quick comparison between the multigrid method (with both cycles to be run 4 times) vs PCG can be seen in Figure \ref{pcgvsmulti}. Although different pressure solving methods, they produce solutions that look similar. Images of the full PCG simulation can be found in Appendix B. 
 
 \begin{figure}[ht!]
 \centering

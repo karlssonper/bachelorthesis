@@ -1,49 +1,54 @@
 \subsection{Navier-Stokes equations}
 
-Most fluid research in computer graphics is based on the famous incompressible Navier-Stokes equations. The equations can be written in many different ways but usually it can be seen as
+Most fluid research in computer graphics is based on the famous incompressible Navier-Stokes equations. The equations can be written in different ways but in this report we will write them as
 
 \begin{equation}
 \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u} + \frac{1}{\rho}\nabla p = g + \upsilon \nabla \cdot \nabla \vec{u}
+\label{navierstokeseq}
 \end{equation}
 
 \begin{equation}
 \nabla \cdot \vec{u} = 0
+\label{incompeq}
 \end {equation}
 
-In Equation 1, $\vec{u}$ is the velocity field of the fluid, $\rho$ is the pressure, $\vec{g}$ represent all the external forces acting on the fluid (such as gravity) and $\upsilon$ is the viscosity constant. This report empashizes on liquid simulations and in particular, water simulations. Water is, by nature, a very non viscious fluid. This means that the term in the Navier-Stokes equations that involves viscousity is relative less important and can be neglected. If we drop the viscousity term in Equation 1, we get
+where $\vec{u}$ is the velocity field of the fluid, $\rho$ is the density, $p$ is the pressure, $\vec{g}$ represent all the external forces acting on the fluid (such as gravity) and $\upsilon$ is the viscosity constant. This report emphasizes on liquid simulations and in particular, water simulations. Water has by nature little vicosity. This means that the term in the Navier-Stokes equations that involves viscosity can be neglected as it is not as important as the other terms. If we drop the viscosity term in Equation \ref{navierstokeseq}, we get
 
 \begin{equation}
 \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u} + \frac{1}{\rho}\nabla p = g
 \label{eulereq}
 \end{equation}
 
-which is also known as the Euler fluid equations. The fluid we are now trying to simulate is called an inviscid fluid. Even though we have removed the viscousity from the equations, it still means that the fluid we simulate can look viscious. This is because of the numerical methods and the errors they introduce. An important reason we prefer the hybrid Lagrangian/Eulerian method in this report is so we can avoid a lot of the numerical dissipation shown in pure grid based solutions that involes a lot of linear interpolation. 
+which is also known as the Euler fluid equations. The fluid we are now trying to simulate is called an inviscid fluid. Even though we have removed the viscosity from the equations, it can still look like viscosity was part of the simulation. This is because of the numerical methods we use and the errors they introduce. An important reason why we prefer the hybrid Lagrangian/Eulerian method in this report is so to avoid a lot of the numerical dissipation shown in pure grid based solutions that tend to use a lot of linear interpolation. 
 \newline
-
+\newline
 At first, Equation 3 might look a bit complicated. To get a better understanding of the different terms, let us start with a simple example where the scalar quantity $c$ is depending on where in space and time it is evaluated. $c$ is said to be a function of spatial coordinates $\vec{x}$ and time $t$, $c(t,\vec{x})$. To find out how much $c$ is changing at coordinate $\vec{x}$, we take the temporal derivate of $c$.
 
 \begin{equation}
 \frac{d}{dt}c(t,\vec{x}) = \frac{\partial c}{\partial t} + \nabla c \cdot \frac{d\vec{x}}{dt}
+\label{ceqqq}
 \end{equation}
 
-which looks a lot similar to the first two terms in Equation 3. Instead of having a scalar quanity $c$, we can take the temporal derivate of a vector $\vec{u}$ and get 
+\noindent
+Equation \ref{ceqqq} looks a lot similar to the first two terms in Equation 3. Instead of having a scalar quanity $c$, we can take the temporal derivate of a vector $\vec{u}$ as can be seen in Equation \ref{derivateofu}.
 
 \begin{equation}
 \frac{d}{dt}\vec{u}(t,\vec{x}) =  \frac{\partial \vec{u}}{\partial t} + \nabla u \cdot \vec{u}
+\label{derivateofu}
 \end{equation}
-
-Before we try to understand what Equation 3 really means, let us look at the following example
-
+\noindent
+Before we try to understand what Equation 3 really means, let us look at the following example:
 \begin{equation}
 \frac{\partial \vec{u}}{\partial t} + \nabla u \cdot \vec{u} = 0
 \end{equation}
-
-This tells us that there is no change in velocity, no matter where in time we are, which of course is false for the most if not all fluids. Let us rearrange Equation 3 a little bit and move the pressure gradient part to the right hand side
+\noindent
+This tells us that there is no change in velocity, no matter where in time we are, which of course is false for  most if not all fluids. Let us rearrange Equation 3 a little bit and move the pressure gradient part to the right hand side.
 
 \begin{equation}
 \frac{\partial \vec{u}}{\partial t} + \vec{u} \cdot \nabla \vec{u} = g - \frac{1}{\rho}\nabla p 
 \end{equation}
-
+\noindent
 What the Euler fluid equations really are telling us is that the change of velocity field of the fluid is equal to a combination of external forces and the negative pressure gradient. The external forces are in most cases static and the most of the interesting movement in a fluid comes from how much pressure varies in space. 
-
-The incomprossibality is explained in Equation 2 where it says that the velocity field of the fluid has to be divergence-free everywhere. This means that the volume can never change in the fluid. For example, let us imagine that we look at a subset region of the fluid, shaped as a box. The rest of the fluid is surrounding the box. Let us also say that the flow of the fluid is only one dimensional in this case and is flowing in the positive x-direction. The amount of fluid that is leaving our box region through the positive x-direction face of the box has to be exactly the same amount of fluid that is entering through the negative x-direction face (because of the one-dimensional flow). The divergence-free condition is going to play an important part later on when we solve for pressure each substep.
+\newline
+\newline
+The incompressibility part is explained in Equation \ref{incompeq} where it says that the velocity field of the fluid has to be divergence-free everywhere. This means that the volume can never change in the fluid. For example, let us imagine a case where we look at a subset region of the fluid, shaped as a box. The rest of the fluid is surrounding the box. Let us also say that the flow of the fluid is only one dimensional in this case and that it is flowing in the positive x-direction. The amount of fluid that is leaving our box region through the positive x-direction edge of the box has to be exactly the same as the amount entering through the negative x-direction edge (because of the one-dimensional flow). The divergence-free condition is going to play an important role later on when we solve for pressure at each step $\Delta t$.
