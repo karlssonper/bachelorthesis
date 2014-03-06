@@ -1,6 +1,6 @@
 \subsection{Creating particles}
 
-We need to create the particles representing the volume of the water before we run the simulation. To do this we need a function that tells us if a point in space $\vec{x}$ is inside our outside of the initial shape of the water.  We create $c_p$ particles for a two dimensional cell that is completely inside of the water. The initial FLIP report suggests the use of $c_p = 4$ with particles jittered evenly inside the cell. Less particles tend to create gaps in the simulation and more particles create unnecessary noise. 
+We need to create the particles representing the volume of the water before we run the simulation. To do this we need a function that tells us if a point in space $\vec{x}$ is inside our outside of the initial shape of the water.  We create $c_p$ particles for a two dimensional cell that is completely inside of the water. The initial FLIP report suggests the use of $c_p = 4$ with particles randomly created inside each cell. Less particles tend to create gaps in the simulation and more particles create unnecessary noise. 
 
 \begin{algorithm}
 \caption{Creating particles from an initial water shape}
@@ -19,7 +19,7 @@ We need to create the particles representing the volume of the water before we r
 \label{createalgorithm}
 \end{algorithm}
 \noindent
-In Algorithm \ref{createalgorithm}, p is a two dimensional vector. {\it random(a,b)} is a function that returns a random value evenly distributed between $a$ and $b$. The $\phi_s > 0$ is a solid level set check to see if the position is outside of the solid. Figure \ref{createexample} shows a basic example of an initial solid level set $\phi_s$ colored grey and an closed water volume in blue.
+In Algorithm \ref{createalgorithm}, p is a two dimensional vector. {\it random(a,b)} is a function that returns a random value uniformly distributed between $a$ and $b$. The $\phi_s > 0$ is a solid level set check to see if the position is outside of the solid. Figure \ref{createexample} shows a basic example of an initial solid level set $\phi_s$ colored grey and an closed water volume in blue.
 
 \begin{figure}[ht!]
 \centering

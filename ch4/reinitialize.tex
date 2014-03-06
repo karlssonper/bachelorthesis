@@ -8,23 +8,12 @@ The goal of the reinitializing step is to make sure that the gradient of the lev
 
 \begin{equation}
 \begin{split}
-|\nabla \phi| &= \sqrt{{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2} \\
-&= 1
+|\nabla \phi| &= \sqrt{{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2}  = 1
 \end{split}
 \label{evaleiokanl}
 \end{equation}
 \noindent
-We can simplify Equation \ref{evaleiokanl} even further by taking advantage of the fact that $1^2 = 1$.
-
-\begin{equation}
-\begin{split}
-{(\sqrt{{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2})}^2 &= 1^2 \\
-{(\frac{\partial \phi}{\partial x})}^2 + {(\frac{\partial \phi}{\partial y})}^2 &= 1
-\end{split}
-\label{noniterativeversion}
-\end{equation}
-\noindent
-We can now turn Equation \ref{noniterativeversion} into an discrete version and therefore making it possible to solve it iteratively. Let us approximate the partial derivatives with backward differences
+We can now turn Equation \ref{evaleiokanl} into an discrete version and therefore making it possible to solve it iteratively. Let us approximate the partial derivatives with backward differences
 
 \begin{equation}
 \begin{split}
@@ -33,8 +22,8 @@ We can now turn Equation \ref{noniterativeversion} into an discrete version and 
 \end{split}
 \label{phiapproxeq}
 \end{equation}
-
-If we substitute in Equation \ref{phiapproxeq} into Equation \ref{noniterativeversion} we get
+\noindent
+If we square both the left and right hand side of Equation \ref{evaleiokanl} and use the approximations of the partial derivatives, we get
 
 \begin{equation}
 \begin{split}
@@ -74,7 +63,7 @@ which is a standard quadratic equation. Rearranging the terms we get
 \label{solvephi}
 \end{equation}
 \noindent
-Equation \ref{solvephi} could potentially have two real solutions ${\phi_{i,j}}^a$ and ${\phi_{i,j}}^b$. We pick the smaller value of the two as our solution. 
+If $b^2 - c < 0$, we do not update $\phi_{i,j}^{n+1}$. If $b^2 - c > 0$, Equation \ref{solvephi} has two real solutions ${\phi_{i,j}}^a$ and ${\phi_{i,j}}^b$. We pick the smaller value of the two as our solution. 
 
 \begin{equation}
 {\phi_{i,j}}^{new} = min({\phi_{i,j}}^a, {\phi_{i,j}}^b)

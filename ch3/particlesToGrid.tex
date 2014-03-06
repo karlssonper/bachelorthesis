@@ -1,6 +1,6 @@
 \subsection{Transfer particle velocities to grid}
 
-The first thing we need to do after advecting the particles is to transfer the particle velocities to our grid based velocity field. We are going to use the barycentric coordinates of a particle inside a cell to decide how much of the particle velocity is going to affect the neighboring velocities in the MAC grid. Since the velocities $u$ and $v$ are stored on different edges in the MAC grid, we need to be careful when we weight and transfer the particle velocities. The easy case would be when the particle position $\vec{x}_p$ is aligned exactly at the middle of the edge between two cells. Let us compare the difference between $u$ and $v$. 
+The first thing we need to do after advecting the particles is to transfer the particle velocities to our grid based velocity field.  The velocities $u$ and $v$ are stored on different edges in the MAC grid and we need to be careful when we weight and transfer the particle velocities. The easy case would be when the particle position $\vec{x}_p$ is aligned exactly at the middle of the edge between two cells. Let us compare the difference between $u$ and $v$. 
 
 \begin{figure}[ht!]
 \centering
@@ -9,7 +9,7 @@ The first thing we need to do after advecting the particles is to transfer the p
 \label{onedge}
 \end{figure}
 \noindent
-The particle position $\vec{x}_p$ in Figure \ref{onedge} is exactly at grid position $(i-1/2,j)$. It is reasonable that the horizontal component of the particle velocity $u_p$ only affects the edge at $u_{i-1/2,j}$. The vertical component $v_p$ is not exactly aligned with any vertical edge. This is where the barycentric coordinates come handy. The position $\vec{x}_p$ is exactly in the middle of the rectangle that the vertical edges $v_{i-1,j-1/2}, v_{i,j-1/2}, v_{i-1,j+1/2}, v_{i,j+1/2} $ spans. In this case, it makes sense that the vertical component of the particle velocity $v_p$ should affect the velocity field at all four vertical edges equally much since it it's in the middle of the rectangle.
+The particle position $\vec{x}_p$ in Figure \ref{onedge} is exactly at grid position $(i-1/2,j)$. It is reasonable that the horizontal component of the particle velocity $u_p$ only affects the edge at $u_{i-1/2,j}$. The vertical component $v_p$ is not exactly aligned with any vertical edge. The position $\vec{x}_p$ is exactly in the middle of the rectangle that the vertical edges $v_{i-1,j-1/2}, v_{i,j-1/2}, v_{i-1,j+1/2}, v_{i,j+1/2} $ spans. In this case, it makes sense that the vertical component of the particle velocity $v_p$ should affect the velocity field at all four vertical edges equally much since it it's in the middle of the rectangle. 
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=80mm]{img/transfer2.pdf}
@@ -19,15 +19,15 @@ The particle position $\vec{x}_p$ in Figure \ref{onedge} is exactly at grid posi
 \newline
 \newline
 \noindent
-What if there are multiple particles nearby? How do they all affect the velocities in the grid together? Figure \ref{fouredge} shows a case where multiple particles are close to a single velocity in the MAC grid. We need a way to weight the velocities so that particle velocities closer to an edge have more effect than the ones further away. The final velocity of an edge in the MAC grid is decided by
+What if there are multiple particles nearby? How do they all affect the velocities in the grid together? Figure \ref{fouredge} shows a case where multiple particles are close to a single velocity in the MAC grid. We need a way to weight the velocities so that particle velocities closer to an edge have more effect than the ones further away. We are going to use the barycentric coordinates of a particles inside the rectangles spanned by nearby edges to decide how much of the particle velocity is going to affect the neighboring velocities in the MAC grid. The final velocity of an edge in the MAC grid is decided by
 
 \begin{eqnarray}
-u_{i-1/2,j} = \frac{\sum\limits_{i\in A}\omega_i(x_i) u_{i}}{\sum\limits_{i \in A}\omega_i(x_i)} \\
-v_{i,j-1/2} = \frac{ \sum\limits_{i \in B}\lambda_i(x_i) v_{i}}{\sum\limits_{i \in B}\lambda_i(x_i)}
+u_{i-1/2,j} = \frac{\sum\limits_{i\in A}\omega_A(x_i) u_{i}}{\sum\limits_{i \in A}\omega_A(x_i)} \\
+v_{i,j-1/2} = \frac{ \sum\limits_{i \in B}\omega_B(x_i) v_{i}}{\sum\limits_{i \in B}\omega_B(x_i)}
 \label{weightsums}
 \end{eqnarray}
 
-where $A$ is the set of particles around a horizontal edge and $\omega(x_i)$ is the horizontal weighting function. $B$ is then the set of particles around a vertical edge and $\lambda(x_i)$ is the vertical weighting function.
+where $A$ is the set of particles around a horizontal edge and $\omega_A(\vec{x})$ is the horizontal weighting function. $B$ is then the set of particles around a vertical edge and $\omega_B(x_i)$ is the vertical weighting function. In the implementation, both $\omega_A(\vec{x})$ and $\omega_B(\vec{x})$ use the barycentric coordinates to decide the weights. Figure \ref{areaa} shows the rectangular areas that decide the barycentric coordinates for a particle.
 \begin{figure}[ht!]
 \centering
 \begin{subfigure}[b]{0.5\textwidth}
@@ -36,7 +36,7 @@ where $A$ is the set of particles around a horizontal edge and $\omega(x_i)$ is 
 \begin{subfigure}[b]{0.3\textwidth}
 \includegraphics[height=51mm]{img/areav.pdf}
 \end{subfigure}
-\caption{To the left, the x-marked velocity $u$ at the edge is only updated from particles within the red area. To the right, the x-marked velocity $v$ is only updated from the blue area.}
+\caption{To the left, the velocity $u$ marked as a cross at the edge is only updated from particles within the red area. To the right, the velocity $v$ marked as a cross is only updated from the blue area.}
 \label{areaa}
 \end{figure}
 \newline

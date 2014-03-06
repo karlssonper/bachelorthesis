@@ -27,7 +27,7 @@ Note that we only use half of the timestep $\Delta t$ in Equation \ref{halfstepe
 {\vec{x}_p}^{n + 1} = {\vec{x}_p}^n + \Delta t \cdot vel({\vec{x}_p}^{n+1/2})
 \end{equation}
 \noindent
-After advecting the particles we still need to run a correction step in case some of the particles get stuck in the solid $\phi_s$. The boundary condition of the pressure equations (covered later in this report) are supposed to prevent this from happening but due to numerical errors in our single precision simulation there are still going to be cases where particles intersect the solid. If this is the case, we move the particle out in the normal direction of the solid.
+After advecting the particles, we still need to run a correction step in case some of the particles get stuck in the solid. The boundary condition of the pressure equations (covered later in this report) are supposed to prevent this from happening but there are still going to be cases where particles intersect the solid due to numerical errors in our single precision simulation. In Chapter 2.4, we introduced the solid level set $\phi_s$. We move the particle out in the normal direction of the solid if a particle is found inside the level set $\phi_s$.
 
 \begin{equation}
 {\vec{x}_p}^{correction} = \vec{x}_p + \beta |\phi_s|\nabla\phi_s

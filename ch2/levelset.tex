@@ -13,7 +13,7 @@ Liquid fluids, unlike gas fluids, have a surface. Tracking a surface is a non-tr
 \right.
 \end{equation}
 \noindent
-Figure \ref{levetsetexample} shows an example of a surface and an interior and exterior area. Notice that if the surface is right on the center of a cell, $\phi$ is zero. 
+Figure \ref{levetsetexample} shows an example of a surface and a blue interior and a white exterior area. All the cells that have their centers outside of the blue area have positive values and the ones on the inside have negative values. Notice that if the surface is aligned on the center of a cell, $\phi$ is zero.  The further away a cell is from the surface, the larger $| \phi| $ is. 
 
 \begin{figure}[ht!]
 \centering
@@ -28,7 +28,7 @@ Another important feature of a level set is the gradient.
 \nabla \phi = \hat{n}
 \end{equation}
 
-where $\hat{n}$ is the direction to the closest point of the surface. This means, given spatial coordinates $\vec{x}$, one can easily find the closest point $\vec{x}_s$ on the surface. 
+where $\hat{n}$ is the unit vector describing the direction to the closest point of the surface. This means, given spatial coordinates $\vec{x}$, one can easily find the closest point $\vec{x}_s$ on the surface. If we evaluate the level set at $\vec{x}$, i.e. $\phi(\vec{x})$, we get the distance to the surface. If we walk this distance in the negative direction of the gradient, we end up at the surface.
 
 \begin{equation}
 \vec{x}_s = \vec{x} - \phi(\vec{x})\nabla \phi(\vec{x})
@@ -37,6 +37,6 @@ where $\hat{n}$ is the direction to the closest point of the surface. This means
 For any level set operator, it is important that the length of the gradient is always of unit length. This is called the Eikonal equation.
 
 \begin{equation}
-|\phi| = 1
+|\nabla \phi| = 1
 \label{eikonaleqfirst}
 \end{equation}

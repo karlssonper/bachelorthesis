@@ -21,11 +21,10 @@ If we replace the velocities for next step $(n+1)$ with the right hand sides of 
 
 \begin{equation}
 \begin{split}
-\frac{1}{\Delta x}[ &{u^*}_{i+1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i+1,j} - p_{i,j}}{\Delta x}
-\\
-& - {u^*}_{i-1/2,j} + \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i-1,j}}{\Delta x} \\
-& + {v^*}_{i,j+1/2} - \frac{\Delta t }{\rho}\frac{p_{i,j+1} - p_{i,j}}{\Delta x} \\
-& -{v^*}_{i,j-1/2} + \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i,j-1/2}}{\Delta x} ] = 0
+\frac{1}{\Delta x}[ &{u^*}_{i+1/2,j} - \frac{\Delta t }{\rho}\frac{p_{i+1,j} - p_{i,j}}{\Delta x} 
+ - {u^*}_{i-1/2,j} + \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i-1,j}}{\Delta x} \\
+& + {v^*}_{i,j+1/2} - \frac{\Delta t }{\rho}\frac{p_{i,j+1} - p_{i,j}}{\Delta x} 
+ -{v^*}_{i,j-1/2} + \frac{\Delta t }{\rho}\frac{p_{i,j} - p_{i,j-1/2}}{\Delta x} ] = 0
 \end{split}
 \label{pressurebeforeeq}
 \end{equation}
@@ -38,3 +37,5 @@ If we rearrange the terms in Equation \ref{pressurebeforeeq}, we get an expressi
 \end{split}
 \label{pressureeq}
 \end{equation}
+\noindent
+This is the finite scheme of the Poission equation we solve for pressure, with the divergence of the velocity field as the right hand side.

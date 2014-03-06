@@ -9,7 +9,7 @@ When storing quantities on a grid, it is common to store the values at the cente
 \label{regulargrid}
 \end{figure}
 \noindent
-Before we talk about the difference of a regular grid and a MAC grid, let us revisit derivative approximations. Figure \ref{regulargrid} shows a simple 2D-dimensional grid with the quanity $q_{i,j}$ stored at the center of each cell. To estimate the derivative of q in the x-direction, we can either use first order forward difference 
+Before we talk about the difference of a regular grid and a MAC grid, let us revisit derivative approximations. Figure \ref{regulargrid} shows a simple 2D-dimensional grid with the quanity $q_{i,j}$ stored at the center of each cell. The cells are symmetric and we use the notation $\Delta x$ for the cell width. To approximate $\frac{\partial q}{\partial x})_{i,j} $, we can either use first order forward difference 
 
 \begin{equation}
 (\frac{\partial q}{\partial x})_{i,j} \approx \frac{q_{i+i,j} - q_{i,j}}{\Delta x}
